@@ -822,10 +822,133 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 return;
             }
 
-            // This is a basic parser - you can paste generated HTML and it will extract data
-            // Note: This is a simplified version that works with the generated format
-            alert('HTML parsing and data extraction would be implemented here. For now, use the auto-save feature or manually re-enter data.');
-            hideImportDialog();
+            try {
+                // Create a temporary div to parse HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                
+                // Clear existing data
+                localStorage.removeItem('pradLogbookData');
+                
+                // Extract Summary
+                const summaryH2 = Array.from(doc.querySelectorAll('h2')).find(h => h.textContent.includes('Summary'));
+                if (summaryH2) {
+                    let summaryText = '';
+                    let node = summaryH2.nextSibling;
+                    while (node && node.tagName !== 'H3' && node.tagName !== 'HR') {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                            summaryText += node.textContent;
+                        } else if (node.tagName === 'BR') {
+                            summaryText += '\n';
+                        }
+                        node = node.nextSibling;
+                    }
+                    document.getElementById('summaryText').value = summaryText.trim();
+                }
+                
+                // Extract Quick Links
+                const quickLinksH3 = Array.from(doc.querySelectorAll('h3')).find(h => h.textContent.includes('Quick Links'));
+                if (quickLinksH3) {
+                    const links = [];
+                    let node = quickLinksH3.nextSibling;
+                    while (node && node.tagName !== 'HR') {
+                        if (node.tagName === 'A') {
+                            links.push({ text: node.textContent, href: node.href });
+                        }
+                        node = node.nextSibling;
+                    }
+                    
+                    // Map to fixed links (simplified - matches known patterns)
+                    links.forEach(link => {
+                        if (link.text.includes('Run Plan')) {
+                            document.getElementById('runPlanLink').value = link.href;
+                        } else if (link.text.includes('Checklist')) {
+                            document.getElementById('checklistLink').value = link.href;
+                        } else if (link.text.includes('Beamline') || link.text.includes('HyCal')) {
+                            document.getElementById('beamlineLink').value = link.href;
+                        } else if (link.text.includes('Target GUI')) {
+                            document.getElementById('targetGuiLink').value = link.href;
+                        } else if (link.text.includes('Beamtime')) {
+                            document.getElementById('beamtimeLink').value = link.href;
+                        }
+                    });
+                }
+                
+                // Extract Shift Log
+                const shiftLogH2 = Array.from(doc.querySelectorAll('h2')).find(h => h.textContent.includes('Shift Log'));
+                if (shiftLogH2) {
+                    let table = shiftLogH2.nextElementSibling;
+                    while (table && table.tagName !== 'TABLE') {
+                        table = table.nextElementSibling;
+                    }
+                    
+                    if (table) {
+                        const rows = Array.from(table.querySelectorAll('tr')).slice(1); // Skip header
+                        rows.forEach((row, index) => {
+                            const cells = row.querySelectorAll('td');
+                            if (cells.length >= 2) {
+                                if (index > 0) addShiftEntry(); // Add new entry for all but first
+                                const entries = document.querySelectorAll('#shiftEntries .entry-item');
+                                const entry = entries[index];
+                                if (entry) {
+                                    entry.querySelector('.shift-time').value = cells[0].textContent.trim();
+                                    entry.querySelector('.shift-entry').value = cells[1].textContent.trim();
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                // Extract Run Summary
+                const runSummaryH2 = Array.from(doc.querySelectorAll('h2')).find(h => h.textContent.includes('Run Summary'));
+                if (runSummaryH2) {
+                    let table = runSummaryH2.nextElementSibling;
+                    while (table && table.tagName !== 'TABLE') {
+                        table = table.nextElementSibling;
+                    }
+                    
+                    if (table) {
+                        const rows = Array.from(table.querySelectorAll('tr')).slice(1); // Skip header
+                        rows.forEach((row, index) => {
+                            const cells = row.querySelectorAll('td');
+                            if (cells.length >= 19) {
+                                if (index > 0) addRunEntry(); // Add new entry for all but first
+                                const entries = document.querySelectorAll('#runEntries .entry-item');
+                                const entry = entries[index];
+                                if (entry) {
+                                    entry.querySelector('.run-number').value = cells[0].textContent.trim();
+                                    entry.querySelector('.run-start').value = cells[1].textContent.trim();
+                                    entry.querySelector('.run-stop').value = cells[2].textContent.trim();
+                                    entry.querySelector('.run-length').value = cells[3].textContent.trim();
+                                    entry.querySelector('.run-type').value = cells[4].textContent.trim();
+                                    entry.querySelector('.run-target').value = cells[5].textContent.trim();
+                                    entry.querySelector('.run-target-pressure').value = cells[6].textContent.trim();
+                                    entry.querySelector('.run-target-temp').value = cells[7].textContent.trim();
+                                    entry.querySelector('.run-chamber-pressure').value = cells[8].textContent.trim();
+                                    entry.querySelector('.run-col1').value = cells[9].textContent.trim();
+                                    entry.querySelector('.run-col2').value = cells[10].textContent.trim();
+                                    entry.querySelector('.run-veto').value = cells[11].textContent.trim();
+                                    entry.querySelector('.run-beam-current').value = cells[12].textContent.trim();
+                                    entry.querySelector('.run-vacuum').value = cells[13].textContent.trim();
+                                    entry.querySelector('.run-hycal-temp').value = cells[14].textContent.trim();
+                                    entry.querySelector('.run-event-rate').value = cells[15].textContent.trim();
+                                    entry.querySelector('.run-live-time').value = cells[16].textContent.trim();
+                                    entry.querySelector('.run-daq-config').value = cells[17].textContent.trim();
+                                    entry.querySelector('.run-comments').value = cells[18].textContent.trim();
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                saveToLocalStorage();
+                hideImportDialog();
+                alert('HTML imported successfully!');
+                
+            } catch (error) {
+                console.error('Import error:', error);
+                alert('Error parsing HTML. Make sure you pasted valid logbook HTML.');
+            }
         }
 
         function clearAllData() {
