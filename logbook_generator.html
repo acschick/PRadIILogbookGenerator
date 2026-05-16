@@ -827,128 +827,130 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                // Clear existing data
-                localStorage.removeItem('pradLogbookData');
+                // Clear existing data first
+                document.getElementById('summaryText').value = '';
+                document.getElementById('runPlanLink').value = '';
+                document.getElementById('checklistLink').value = '';
+                document.getElementById('beamlineLink').value = '';
+                document.getElementById('targetGuiLink').value = '';
+                document.getElementById('beamtimeLink').value = '';
                 
-                // Extract Summary
-                const summaryH2 = Array.from(doc.querySelectorAll('h2')).find(h => h.textContent.includes('Summary'));
-                if (summaryH2) {
-                    let summaryText = '';
-                    let node = summaryH2.nextSibling;
-                    while (node && node.tagName !== 'H3' && node.tagName !== 'HR') {
-                        if (node.nodeType === Node.TEXT_NODE) {
-                            summaryText += node.textContent;
-                        } else if (node.tagName === 'BR') {
-                            summaryText += '\n';
-                        }
-                        node = node.nextSibling;
-                    }
-                    document.getElementById('summaryText').value = summaryText.trim();
+                // Remove all existing shift and run entries
+                document.getElementById('shiftEntries').innerHTML = '';
+                document.getElementById('runEntries').innerHTML = '';
+                
+                // Extract Summary text (everything between <h2>Summary</h2> and <h3>Quick Links</h3>)
+                const bodyHTML = doc.body.innerHTML;
+                const summaryMatch = bodyHTML.match(/<h2>Summary<\/h2>([\s\S]*?)<h3>Quick Links<\/h3>/i);
+                if (summaryMatch) {
+                    const summaryHTML = summaryMatch[1].trim();
+                    // Strip HTML tags and decode entities
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = summaryHTML;
+                    document.getElementById('summaryText').value = tempDiv.textContent.trim();
                 }
                 
-                // Extract Quick Links
-                const quickLinksH3 = Array.from(doc.querySelectorAll('h3')).find(h => h.textContent.includes('Quick Links'));
-                if (quickLinksH3) {
-                    const links = [];
-                    let node = quickLinksH3.nextSibling;
-                    while (node && node.tagName !== 'HR') {
-                        if (node.tagName === 'A') {
-                            links.push({ text: node.textContent, href: node.href });
-                        }
-                        node = node.nextSibling;
+                // Extract Quick Links - find all <a> tags between Quick Links and Shift Log
+                const allLinks = doc.querySelectorAll('a');
+                allLinks.forEach(link => {
+                    const href = link.getAttribute('href') || '';
+                    const text = link.textContent.trim();
+                    
+                    if (text.toLowerCase().includes('run plan') || href.includes('Run_Plan')) {
+                        document.getElementById('runPlanLink').value = href;
+                    } else if (text.toLowerCase().includes('checklist')) {
+                        document.getElementById('checklistLink').value = href;
+                    } else if (text.toLowerCase().includes('beamline') || text.toLowerCase().includes('hycal') || text.toLowerCase().includes('scalar')) {
+                        document.getElementById('beamlineLink').value = href;
+                    } else if (text.toLowerCase().includes('target') && text.toLowerCase().includes('gui')) {
+                        document.getElementById('targetGuiLink').value = href;
+                    } else if (text.toLowerCase().includes('beamtime')) {
+                        document.getElementById('beamtimeLink').value = href;
+                    }
+                });
+                
+                // Extract Shift Log - find the table after "Shift Log" heading
+                const allTables = doc.querySelectorAll('table');
+                let shiftLogTable = null;
+                let runSummaryTable = null;
+                
+                // Identify tables by looking at headers
+                allTables.forEach(table => {
+                    const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent.trim());
+                    if (headers.includes('Time') && headers.includes('Logbook Entry')) {
+                        shiftLogTable = table;
+                    } else if (headers.includes('Run Number') && headers.includes('Start Time')) {
+                        runSummaryTable = table;
+                    }
+                });
+                
+                // Process Shift Log table
+                if (shiftLogTable) {
+                    const rows = Array.from(shiftLogTable.querySelectorAll('tr')).slice(1); // Skip header
+                    const validRows = rows.filter(row => {
+                        const cells = row.querySelectorAll('td');
+                        return cells.length >= 2 && 
+                               (cells[0].textContent.trim() !== '' || cells[1].textContent.trim() !== '');
+                    });
+                    
+                    // Add first entry (always exists)
+                    if (validRows.length > 0) {
+                        addShiftEntry();
                     }
                     
-                    // Map to fixed links (simplified - matches known patterns)
-                    links.forEach(link => {
-                        if (link.text.includes('Run Plan')) {
-                            document.getElementById('runPlanLink').value = link.href;
-                        } else if (link.text.includes('Checklist')) {
-                            document.getElementById('checklistLink').value = link.href;
-                        } else if (link.text.includes('Beamline') || link.text.includes('HyCal')) {
-                            document.getElementById('beamlineLink').value = link.href;
-                        } else if (link.text.includes('Target GUI')) {
-                            document.getElementById('targetGuiLink').value = link.href;
-                        } else if (link.text.includes('Beamtime')) {
-                            document.getElementById('beamtimeLink').value = link.href;
+                    validRows.forEach((row, index) => {
+                        const cells = row.querySelectorAll('td');
+                        if (index > 0) addShiftEntry(); // Add entries after first
+                        const entries = document.querySelectorAll('#shiftEntries .entry-item');
+                        const entry = entries[index];
+                        if (entry) {
+                            entry.querySelector('.shift-time').value = cells[0].textContent.trim();
+                            entry.querySelector('.shift-entry').value = cells[1].textContent.trim();
                         }
                     });
                 }
                 
-                // Extract Shift Log
-                const shiftLogH2 = Array.from(doc.querySelectorAll('h2')).find(h => h.textContent.includes('Shift Log'));
-                if (shiftLogH2) {
-                    let table = shiftLogH2.nextElementSibling;
-                    while (table && table.tagName !== 'TABLE') {
-                        table = table.nextElementSibling;
+                // Process Run Summary table
+                if (runSummaryTable) {
+                    const rows = Array.from(runSummaryTable.querySelectorAll('tr')).slice(1); // Skip header
+                    const validRows = rows.filter(row => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length < 19) return false;
+                        return Array.from(cells).some(cell => cell.textContent.trim() !== '');
+                    });
+                    
+                    // Add first entry (always exists)
+                    if (validRows.length > 0) {
+                        addRunEntry();
                     }
                     
-                    if (table) {
-                        const rows = Array.from(table.querySelectorAll('tr')).slice(1); // Skip header
-                        const validRows = rows.filter(row => {
-                            const cells = row.querySelectorAll('td');
-                            // Skip rows where both cells are empty
-                            return cells.length >= 2 && 
-                                   (cells[0].textContent.trim() !== '' || cells[1].textContent.trim() !== '');
-                        });
-                        
-                        validRows.forEach((row, index) => {
-                            const cells = row.querySelectorAll('td');
-                            if (index > 0) addShiftEntry(); // Add new entry for all but first
-                            const entries = document.querySelectorAll('#shiftEntries .entry-item');
-                            const entry = entries[index];
-                            if (entry) {
-                                entry.querySelector('.shift-time').value = cells[0].textContent.trim();
-                                entry.querySelector('.shift-entry').value = cells[1].textContent.trim();
-                            }
-                        });
-                    }
-                }
-                
-                // Extract Run Summary
-                const runSummaryH2 = Array.from(doc.querySelectorAll('h2')).find(h => h.textContent.includes('Run Summary'));
-                if (runSummaryH2) {
-                    let table = runSummaryH2.nextElementSibling;
-                    while (table && table.tagName !== 'TABLE') {
-                        table = table.nextElementSibling;
-                    }
-                    
-                    if (table) {
-                        const rows = Array.from(table.querySelectorAll('tr')).slice(1); // Skip header
-                        const validRows = rows.filter(row => {
-                            const cells = row.querySelectorAll('td');
-                            // Skip rows where all cells are empty
-                            if (cells.length < 19) return false;
-                            return Array.from(cells).some(cell => cell.textContent.trim() !== '');
-                        });
-                        
-                        validRows.forEach((row, index) => {
-                            const cells = row.querySelectorAll('td');
-                            if (index > 0) addRunEntry(); // Add new entry for all but first
-                            const entries = document.querySelectorAll('#runEntries .entry-item');
-                            const entry = entries[index];
-                            if (entry) {
-                                entry.querySelector('.run-number').value = cells[0].textContent.trim();
-                                entry.querySelector('.run-start').value = cells[1].textContent.trim();
-                                entry.querySelector('.run-stop').value = cells[2].textContent.trim();
-                                entry.querySelector('.run-length').value = cells[3].textContent.trim();
-                                entry.querySelector('.run-type').value = cells[4].textContent.trim();
-                                entry.querySelector('.run-target').value = cells[5].textContent.trim();
-                                entry.querySelector('.run-target-pressure').value = cells[6].textContent.trim();
-                                entry.querySelector('.run-cell-temp').value = cells[7].textContent.trim();
-                                entry.querySelector('.run-chamber-pressure').value = cells[8].textContent.trim();
-                                entry.querySelector('.run-collimator1').value = cells[9].textContent.trim();
-                                entry.querySelector('.run-collimator2').value = cells[10].textContent.trim();
-                                entry.querySelector('.run-veto').value = cells[11].textContent.trim();
-                                entry.querySelector('.run-current').value = cells[12].textContent.trim();
-                                entry.querySelector('.run-vacuum').value = cells[13].textContent.trim();
-                                entry.querySelector('.run-hycal-temp').value = cells[14].textContent.trim();
-                                entry.querySelector('.run-rate').value = cells[15].textContent.trim();
-                                entry.querySelector('.run-livetime').value = cells[16].textContent.trim();
-                                entry.querySelector('.run-config').value = cells[17].textContent.trim();
-                                entry.querySelector('.run-comments').value = cells[18].textContent.trim();
-                            }
-                        });
-                    }
+                    validRows.forEach((row, index) => {
+                        const cells = row.querySelectorAll('td');
+                        if (index > 0) addRunEntry(); // Add entries after first
+                        const entries = document.querySelectorAll('#runEntries .entry-item');
+                        const entry = entries[index];
+                        if (entry) {
+                            entry.querySelector('.run-number').value = cells[0].textContent.trim();
+                            entry.querySelector('.run-start').value = cells[1].textContent.trim();
+                            entry.querySelector('.run-stop').value = cells[2].textContent.trim();
+                            entry.querySelector('.run-length').value = cells[3].textContent.trim();
+                            entry.querySelector('.run-type').value = cells[4].textContent.trim();
+                            entry.querySelector('.run-target').value = cells[5].textContent.trim();
+                            entry.querySelector('.run-target-pressure').value = cells[6].textContent.trim();
+                            entry.querySelector('.run-cell-temp').value = cells[7].textContent.trim();
+                            entry.querySelector('.run-chamber-pressure').value = cells[8].textContent.trim();
+                            entry.querySelector('.run-collimator1').value = cells[9].textContent.trim();
+                            entry.querySelector('.run-collimator2').value = cells[10].textContent.trim();
+                            entry.querySelector('.run-veto').value = cells[11].textContent.trim();
+                            entry.querySelector('.run-current').value = cells[12].textContent.trim();
+                            entry.querySelector('.run-vacuum').value = cells[13].textContent.trim();
+                            entry.querySelector('.run-hycal-temp').value = cells[14].textContent.trim();
+                            entry.querySelector('.run-rate').value = cells[15].textContent.trim();
+                            entry.querySelector('.run-livetime').value = cells[16].textContent.trim();
+                            entry.querySelector('.run-config').value = cells[17].textContent.trim();
+                            entry.querySelector('.run-comments').value = cells[18].textContent.trim();
+                        }
+                    });
                 }
                 
                 saveToLocalStorage();
@@ -957,7 +959,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 
             } catch (error) {
                 console.error('Import error:', error);
-                alert('Error parsing HTML. Make sure you pasted valid logbook HTML.');
+                alert('Error parsing HTML: ' + error.message);
             }
         }
 
