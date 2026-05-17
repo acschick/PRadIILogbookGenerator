@@ -121,6 +121,16 @@
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.6);
             transform: translateY(-2px);
         }
+        .btn-info {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+        }
+        .btn-info:hover {
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.6);
+            transform: translateY(-2px);
+        }
         .entry-item {
             border: 1px solid rgba(255, 152, 0, 0.3);
             padding: 15px;
@@ -208,7 +218,7 @@
         </p>
         <button class="btn btn-secondary" onclick="showImportDialog()">Import from Previous HTML</button>
         <button class="btn btn-danger" onclick="clearAllData()">Clear All & Start Fresh</button>
-        <div id="autoSaveStatus" style="color: #ffb74d; font-size: 12px; margin-top: 10px;"></div>
+        <div id="autoSaveStatus" style="color: #64b5f6; font-size: 11px; margin-top: 10px;"></div>
         <p style="margin-top: 15px; color: #bdbdbd; font-size: 13px;">
             Contact: <a href="mailto:acschick@jlab.org" style="color: #ffb74d;">acschick@jlab.org</a>
         </p>
@@ -273,7 +283,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
 
     <div class="container">
         <h2>Generated HTML</h2>
-        <button class="btn btn-secondary" onclick="generateHTML()">Generate HTML</button>
+        <button class="btn btn-info" onclick="generateHTML()">Generate HTML</button>
         <button class="btn btn-success" onclick="copyToClipboard()">Copy to Clipboard</button>
         <div class="success-message" id="copySuccess">✓ Copied to clipboard!</div>
         <div id="output"></div>
@@ -741,10 +751,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             localStorage.setItem('pradLogbookData', JSON.stringify(data));
             
             const status = document.getElementById('autoSaveStatus');
-            status.textContent = '✓ Auto-saved at ' + new Date().toLocaleTimeString();
-            setTimeout(() => {
-                status.textContent = '';
-            }, 3000);
+            status.textContent = 'Last autosave at ' + new Date().toLocaleTimeString();
         }
 
         function loadFromLocalStorage() {
