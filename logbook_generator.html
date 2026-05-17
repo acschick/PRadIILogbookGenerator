@@ -210,7 +210,7 @@
         <button class="btn btn-danger" onclick="clearAllData()">Clear All & Start Fresh</button>
         <div id="autoSaveStatus" style="color: #ffb74d; font-size: 12px; margin-top: 10px;"></div>
         <p style="margin-top: 15px; color: #bdbdbd; font-size: 13px;">
-            Questions? Email <a href="mailto:acschick@jlab.org" style="color: #ffb74d;">acschick@jlab.org</a>
+            Contact: <a href="mailto:acschick@jlab.org" style="color: #ffb74d;">acschick@jlab.org</a>
         </p>
     </div>
     
@@ -297,9 +297,10 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 <input type="text" class="al-text" value="">
                 <label>URL:</label>
                 <input type="url" class="al-url" value="">
-                <button class="btn btn-danger" onclick="this.parentElement.remove()">Remove</button>
+                <button class="btn btn-danger" onclick="removeAndSave(this)">Remove</button>
             `;
             container.appendChild(div);
+            saveToLocalStorage();
         }
 
         function addShiftEntry() {
@@ -310,7 +311,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             div.innerHTML = `
                 <div class="entry-header">
                     <span class="entry-number">Shift Entry #${shiftCounter}</span>
-                    <button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">Remove</button>
+                    <button class="btn btn-danger" onclick="removeAndSave(this, true)">Remove</button>
                 </div>
                 <div class="grid-2">
                     <div class="form-group">
@@ -324,6 +325,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 </div>
             `;
             container.appendChild(div);
+            saveToLocalStorage();
         }
 
         function addRunEntry() {
@@ -334,7 +336,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             div.innerHTML = `
                 <div class="entry-header">
                     <span class="entry-number">Run Entry #${runCounter}</span>
-                    <button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">Remove</button>
+                    <button class="btn btn-danger" onclick="removeAndSave(this, true)">Remove</button>
                 </div>
                 <div class="grid-2">
                     <div class="form-group">
@@ -438,6 +440,13 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 </div>
             `;
             container.appendChild(div);
+            saveToLocalStorage();
+        }
+
+        function removeAndSave(button, isParentParent = false) {
+            const element = isParentParent ? button.parentElement.parentElement : button.parentElement;
+            element.remove();
+            saveToLocalStorage();
         }
 
         function generateHTML() {
@@ -979,11 +988,6 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 location.reload();
             }
         }
-
-        // Auto-save on any input change
-        document.addEventListener('input', () => {
-            saveToLocalStorage();
-        });
 
         // Load saved data on page load
         window.addEventListener('DOMContentLoaded', () => {
