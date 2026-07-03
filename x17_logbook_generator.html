@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRad Logbook Entry Generator</title>
+    <title>X17 Logbook Entry Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -209,7 +209,7 @@
     <div class="logo-container">
         <img src="https://www.jlab.org/prad/PRad_logo.png" alt="PRad Logo" />
     </div>
-    <h1 style="text-align: center; color: #ff9800; text-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 0 30px rgba(255, 152, 0, 0.3);">PRad-II Logbook Entry Generator</h1>
+    <h1 style="text-align: center; color: #ff9800; text-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 0 30px rgba(255, 152, 0, 0.3);">X17 Logbook Entry Generator</h1>
     
     <div class="container" style="background: linear-gradient(135deg, #3A3F44 0%, #2F3439 100%); border: 1px solid rgba(255, 152, 0, 0.3);">
         <h3 style="margin-top: 0; color: #ffb74d;">Session Management</h3>
@@ -354,94 +354,49 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                         <input type="text" class="run-number" value="">
                     </div>
                     <div class="form-group">
-                        <label>Start Time:</label>
-                        <input type="text" class="run-start" placeholder="00:00" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Stop Time:</label>
-                        <input type="text" class="run-stop" placeholder="00:00" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Length (min):</label>
-                        <input type="text" class="run-length" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Type:</label>
-                        <select class="run-type" onchange="handleTypeChange(this)">
-                            <option value="Production">Production</option>
-                            <option value="Cosmic">Cosmic</option>
-                            <option value="Random Trigger">Random Trigger</option>
-                            <option value="HyCal Calibration">HyCal Calibration</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group run-type-other" style="display:none;">
-                        <label>Other Type:</label>
-                        <input type="text" class="run-type-other-text" value="">
-                    </div>
-                    <div class="form-group">
                         <label>Target:</label>
-                        <select class="run-target" onchange="handleTargetChange(this)">
-                            <option value="H2">H2</option>
-                            <option value="Empty Cell">Empty Cell</option>
-                            <option value="Empty Cell and Empty Chamber">Empty Cell and Empty Chamber</option>
-                            <option value="Out">Out</option>
-                            <option value="Carbon">Carbon</option>
-                            <option value="Aluminum">Aluminum</option>
-                            <option value="Other">Other</option>
+                        <select class="run-target">
+                            <option value="1um Ta">1um Ta</option>
+                            <option value="2um Ta">2um Ta</option>
+                            <option value="4um Ta">4um Ta</option>
+                            <option value="50um C">50um C</option>
                         </select>
                     </div>
-                    <div class="form-group run-target-other" style="display:none;">
-                        <label>Other Target:</label>
-                        <input type="text" class="run-target-other-text" value="">
+                    <div class="form-group">
+                        <label>Collimator:</label>
+                        <input type="text" class="run-collimator" value="">
                     </div>
                     <div class="form-group">
-                        <label>Target Pressure:</label>
-                        <input type="text" class="run-target-pressure" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Target Cell Temp (336D):</label>
-                        <input type="text" class="run-cell-temp" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Target Chamber Pressure:</label>
-                        <input type="text" class="run-chamber-pressure" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Collimator 1 Position:</label>
-                        <input type="text" class="run-collimator1" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Collimator 2 Position:</label>
-                        <input type="text" class="run-collimator2" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Veto Position:</label>
-                        <input type="text" class="run-veto" value="">
+                        <label>Vacuum Tank Pressure 2H00 (mTorr):</label>
+                        <input type="text" class="run-vacuum" value="">
                     </div>
                     <div class="form-group">
                         <label>Beam Current:</label>
                         <input type="text" class="run-current" value="">
                     </div>
                     <div class="form-group">
-                        <label>Vacuum Tank (Torr):</label>
-                        <input type="text" class="run-vacuum" value="">
-                    </div>
-                    <div class="form-group">
                         <label>HyCal Temp:</label>
                         <input type="text" class="run-hycal-temp" value="">
                     </div>
                     <div class="form-group">
-                        <label>Event Rate (kHz):</label>
+                        <label>Event Rate:</label>
                         <input type="text" class="run-rate" value="">
                     </div>
                     <div class="form-group">
-                        <label>Live Time:</label>
+                        <label>Livetime:</label>
                         <input type="text" class="run-livetime" value="">
                     </div>
                     <div class="form-group">
-                        <label>DAQ Config:</label>
-                        <input type="text" class="run-config" value="">
+                        <label>Date:</label>
+                        <input type="text" class="run-date" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time:</label>
+                        <input type="text" class="run-start" placeholder="00:00" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Stop Time:</label>
+                        <input type="text" class="run-stop" placeholder="00:00" value="">
                     </div>
                     <div class="form-group">
                         <label>Comments:</label>
@@ -553,86 +508,38 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             html += '<hr>\n<h2>Run Summary</h2>\n';
             html += '<table style="border:2px solid black;">\n';
             html += '  <colgroup>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
-            html += '    <col style="border:1px solid black;"/>\n';
+            for (let i = 0; i < 12; i++) {
+                html += '    <col style="border:1px solid black;"/>\n';
+            }
             html += '  </colgroup> \n';
             html += '  <tr style="border:1px solid black; background-color: rgba(222,222,222,1.0);">\n';
             html += '    <th style="text-align:center;">Run Number</th>\n';
+            html += '    <th style="text-align:left;">Target</th>\n';
+            html += '    <th style="text-align:left;">Collimator</th>\n';
+            html += '    <th style="text-align:right;">Vacuum Tank Pressure 2H00 (mTorr)</th>\n';
+            html += '    <th style="text-align:right;">Beam Current</th>\n';
+            html += '    <th style="text-align:right;">HyCal Temp</th>\n';
+            html += '    <th style="text-align:right;">Event Rate</th>\n';
+            html += '    <th style="text-align:right;">Livetime</th>\n';
+            html += '    <th style="text-align:center;">Date</th>\n';
             html += '    <th style="text-align:center;">Start Time</th>\n';
             html += '    <th style="text-align:center;">Stop Time</th>\n';
-            html += '    <th style="text-align:center;">Length (min)</th>\n';
-            html += '    <th style="text-align:left;">Type</th>\n';
-            html += '    <th style="text-align:left;">Target</th>\n';
-            html += '    <th style="text-align:right;">Target Pressure</th>\n';
-            html += '    <th style="text-align:right;">Target Cell Temp (336D)</th>\n';
-            html += '    <th style="text-align:right;">Target Chamber Pressure</th>\n';
-            html += '    <th style="text-align:left;">Collimator 1 Position</th>\n';
-            html += '    <th style="text-align:left;">Collimator 2 Position</th>\n';
-            html += '    <th style="text-align:left;">Veto Position</th>\n';
-            html += '    <th style="text-align:right;">Beam Current</th>\n';
-            html += '    <th style="text-align:right;">Vacuum Tank (Torr)</th>\n';
-            html += '    <th style="text-align:right;">HyCal Temp</th>\n';
-            html += '    <th style="text-align:right;">Event Rate (kHz)</th>\n';
-            html += '    <th style="text-align:right;">Live Time</th>\n';
-            html += '    <th style="text-align:left;">DAQ Config</th>\n';
             html += '    <th style="text-align:left;">Comments</th>\n';
             html += '  </tr>\n\n';
             
             const runItems = document.querySelectorAll('#runEntries .entry-item');
             runItems.forEach((item, index) => {
                 const runNumber = item.querySelector('.run-number').value;
-                const startTime = item.querySelector('.run-start').value;
-                const stopTime = item.querySelector('.run-stop').value;
-                const length = item.querySelector('.run-length').value;
-                let type = item.querySelector('.run-type').value;
-                
-                // Handle "Other" type
-                if (type === 'Other') {
-                    const otherText = item.querySelector('.run-type-other-text');
-                    if (otherText && otherText.value) {
-                        type = otherText.value;
-                    }
-                }
-                
-                let target = item.querySelector('.run-target').value;
-                
-                // Handle "Other" target
-                if (target === 'Other') {
-                    const otherText = item.querySelector('.run-target-other-text');
-                    if (otherText && otherText.value) {
-                        target = otherText.value;
-                    }
-                }
-                
-                const targetPressure = item.querySelector('.run-target-pressure').value;
-                const cellTemp = item.querySelector('.run-cell-temp').value;
-                const chamberPressure = item.querySelector('.run-chamber-pressure').value;
-                const collimator1 = item.querySelector('.run-collimator1').value;
-                const collimator2 = item.querySelector('.run-collimator2').value;
-                const veto = item.querySelector('.run-veto').value;
-                const current = item.querySelector('.run-current').value;
+                const target = item.querySelector('.run-target').value;
+                const collimator = item.querySelector('.run-collimator').value;
                 const vacuum = item.querySelector('.run-vacuum').value;
+                const current = item.querySelector('.run-current').value;
                 const hycalTemp = item.querySelector('.run-hycal-temp').value;
                 const rate = item.querySelector('.run-rate').value;
                 const livetime = item.querySelector('.run-livetime').value;
-                const config = item.querySelector('.run-config').value;
+                const date = item.querySelector('.run-date').value;
+                const startTime = item.querySelector('.run-start').value;
+                const stopTime = item.querySelector('.run-stop').value;
                 const comments = item.querySelector('.run-comments').value;
                 
                 // Auto-alternate background colors
@@ -641,23 +548,16 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 
                 html += `<tr${styleAttr}>\n`;
                 html += `    <td style="text-align:right">\n${runNumber}\n    </td>\n`;
-                html += `    <td style="text-align:right">\n${startTime}\n    </td>\n`;
-                html += `    <td style="text-align:right">\n${stopTime}\n    </td>\n`;
-                html += `    <td style="text-align:right">\n${length}\n    </td>\n`;
-                html += `    <td style="text-align:left">\n${type}\n    </td>\n`;
                 html += `    <td style="text-align:left">\n${target}\n    </td>\n`;
-                html += `    <td style="text-align:right">\n${targetPressure}\n    </td>\n`;
-                html += `    <td style="text-align:right">\n${cellTemp}\n    </td>\n`;
-                html += `    <td style="text-align:right">\n${chamberPressure}\n    </td>\n`;
-                html += `    <td style="text-align:left">\n${collimator1}\n    </td>\n`;
-                html += `    <td style="text-align:left">\n${collimator2}\n    </td>\n`;
-                html += `    <td style="text-align:left">\n${veto}\n    </td>\n`;
-                html += `    <td style="text-align:right">\n${current}\n    </td>\n`;
+                html += `    <td style="text-align:left">\n${collimator}\n    </td>\n`;
                 html += `    <td style="text-align:right">\n${vacuum}\n    </td>\n`;
+                html += `    <td style="text-align:right">\n${current}\n    </td>\n`;
                 html += `    <td style="text-align:right">\n${hycalTemp}\n    </td>\n`;
                 html += `    <td style="text-align:right">\n${rate}\n    </td>\n`;
                 html += `    <td style="text-align:right">\n${livetime}\n    </td>\n`;
-                html += `    <td style="text-align:left">\n${config}\n    </td>\n`;
+                html += `    <td style="text-align:center">\n${date}\n    </td>\n`;
+                html += `    <td style="text-align:right">\n${startTime}\n    </td>\n`;
+                html += `    <td style="text-align:right">\n${stopTime}\n    </td>\n`;
                 html += `    <td style="text-align:left">\n${formatLogbookText(comments)}\n    </td>\n`;
                 html += `</tr>\n\n`;
             });
@@ -666,26 +566,6 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             
             document.getElementById('output').textContent = html;
             document.getElementById('preview').innerHTML = html;
-        }
-
-        function handleTypeChange(selectElement) {
-            const parentDiv = selectElement.closest('.entry-item');
-            const otherDiv = parentDiv.querySelector('.run-type-other');
-            if (selectElement.value === 'Other') {
-                otherDiv.style.display = 'block';
-            } else {
-                otherDiv.style.display = 'none';
-            }
-        }
-
-        function handleTargetChange(selectElement) {
-            const parentDiv = selectElement.closest('.entry-item');
-            const otherDiv = parentDiv.querySelector('.run-target-other');
-            if (selectElement.value === 'Other') {
-                otherDiv.style.display = 'block';
-            } else {
-                otherDiv.style.display = 'none';
-            }
         }
 
         function copyToClipboard() {
@@ -734,38 +614,29 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             document.querySelectorAll('#runEntries .entry-item').forEach(item => {
                 const runData = {
                     runNumber: item.querySelector('.run-number').value,
-                    startTime: item.querySelector('.run-start').value,
-                    stopTime: item.querySelector('.run-stop').value,
-                    length: item.querySelector('.run-length').value,
-                    type: item.querySelector('.run-type').value,
-                    typeOther: item.querySelector('.run-type-other-text')?.value || '',
                     target: item.querySelector('.run-target').value,
-                    targetOther: item.querySelector('.run-target-other-text')?.value || '',
-                    targetPressure: item.querySelector('.run-target-pressure').value,
-                    cellTemp: item.querySelector('.run-cell-temp').value,
-                    chamberPressure: item.querySelector('.run-chamber-pressure').value,
-                    collimator1: item.querySelector('.run-collimator1').value,
-                    collimator2: item.querySelector('.run-collimator2').value,
-                    veto: item.querySelector('.run-veto').value,
-                    current: item.querySelector('.run-current').value,
+                    collimator: item.querySelector('.run-collimator').value,
                     vacuum: item.querySelector('.run-vacuum').value,
+                    current: item.querySelector('.run-current').value,
                     hycalTemp: item.querySelector('.run-hycal-temp').value,
                     rate: item.querySelector('.run-rate').value,
                     livetime: item.querySelector('.run-livetime').value,
-                    config: item.querySelector('.run-config').value,
+                    date: item.querySelector('.run-date').value,
+                    startTime: item.querySelector('.run-start').value,
+                    stopTime: item.querySelector('.run-stop').value,
                     comments: item.querySelector('.run-comments').value
                 };
                 data.runEntries.push(runData);
             });
 
-            localStorage.setItem('pradLogbookData', JSON.stringify(data));
+            localStorage.setItem('x17LogbookData', JSON.stringify(data));
             
             const status = document.getElementById('autoSaveStatus');
             status.textContent = 'Last autosave at ' + new Date().toLocaleTimeString();
         }
 
         function loadFromLocalStorage() {
-            const saved = localStorage.getItem('pradLogbookData');
+            const saved = localStorage.getItem('x17LogbookData');
             if (!saved) return;
 
             try {
@@ -803,31 +674,16 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                     const items = document.querySelectorAll('#runEntries .entry-item');
                     const lastItem = items[items.length - 1];
                     lastItem.querySelector('.run-number').value = run.runNumber;
-                    lastItem.querySelector('.run-start').value = run.startTime;
-                    lastItem.querySelector('.run-stop').value = run.stopTime;
-                    lastItem.querySelector('.run-length').value = run.length;
-                    lastItem.querySelector('.run-type').value = run.type;
-                    if (run.type === 'Other' && run.typeOther) {
-                        lastItem.querySelector('.run-type-other').style.display = 'block';
-                        lastItem.querySelector('.run-type-other-text').value = run.typeOther;
-                    }
-                    lastItem.querySelector('.run-target').value = run.target;
-                    if (run.target === 'Other' && run.targetOther) {
-                        lastItem.querySelector('.run-target-other').style.display = 'block';
-                        lastItem.querySelector('.run-target-other-text').value = run.targetOther;
-                    }
-                    lastItem.querySelector('.run-target-pressure').value = run.targetPressure;
-                    lastItem.querySelector('.run-cell-temp').value = run.cellTemp;
-                    lastItem.querySelector('.run-chamber-pressure').value = run.chamberPressure;
-                    lastItem.querySelector('.run-collimator1').value = run.collimator1;
-                    lastItem.querySelector('.run-collimator2').value = run.collimator2;
-                    lastItem.querySelector('.run-veto').value = run.veto;
-                    lastItem.querySelector('.run-current').value = run.current;
+                    lastItem.querySelector('.run-target').value = run.target || '1um Ta';
+                    lastItem.querySelector('.run-collimator').value = run.collimator || '';
                     lastItem.querySelector('.run-vacuum').value = run.vacuum;
+                    lastItem.querySelector('.run-current').value = run.current;
                     lastItem.querySelector('.run-hycal-temp').value = run.hycalTemp;
                     lastItem.querySelector('.run-rate').value = run.rate;
                     lastItem.querySelector('.run-livetime').value = run.livetime;
-                    lastItem.querySelector('.run-config').value = run.config;
+                    lastItem.querySelector('.run-date').value = run.date || '';
+                    lastItem.querySelector('.run-start').value = run.startTime;
+                    lastItem.querySelector('.run-stop').value = run.stopTime;
                     lastItem.querySelector('.run-comments').value = run.comments;
                 });
 
@@ -954,7 +810,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                     const rows = Array.from(runSummaryTable.querySelectorAll('tr')).slice(1); // Skip header
                     const validRows = rows.filter(row => {
                         const cells = row.querySelectorAll('td');
-                        if (cells.length < 19) return false;
+                        if (cells.length < 12) return false;
                         return Array.from(cells).some(cell => cell.textContent.trim() !== '');
                     });
                     
@@ -970,24 +826,17 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                         const entry = entries[index];
                         if (entry) {
                             entry.querySelector('.run-number').value = cells[0].textContent.trim();
-                            entry.querySelector('.run-start').value = cells[1].textContent.trim();
-                            entry.querySelector('.run-stop').value = cells[2].textContent.trim();
-                            entry.querySelector('.run-length').value = cells[3].textContent.trim();
-                            entry.querySelector('.run-type').value = cells[4].textContent.trim();
-                            entry.querySelector('.run-target').value = cells[5].textContent.trim();
-                            entry.querySelector('.run-target-pressure').value = cells[6].textContent.trim();
-                            entry.querySelector('.run-cell-temp').value = cells[7].textContent.trim();
-                            entry.querySelector('.run-chamber-pressure').value = cells[8].textContent.trim();
-                            entry.querySelector('.run-collimator1').value = cells[9].textContent.trim();
-                            entry.querySelector('.run-collimator2').value = cells[10].textContent.trim();
-                            entry.querySelector('.run-veto').value = cells[11].textContent.trim();
-                            entry.querySelector('.run-current').value = cells[12].textContent.trim();
-                            entry.querySelector('.run-vacuum').value = cells[13].textContent.trim();
-                            entry.querySelector('.run-hycal-temp').value = cells[14].textContent.trim();
-                            entry.querySelector('.run-rate').value = cells[15].textContent.trim();
-                            entry.querySelector('.run-livetime').value = cells[16].textContent.trim();
-                            entry.querySelector('.run-config').value = cells[17].textContent.trim();
-                            entry.querySelector('.run-comments').value = cells[18].textContent.trim();
+                            entry.querySelector('.run-target').value = cells[1].textContent.trim();
+                            entry.querySelector('.run-collimator').value = cells[2].textContent.trim();
+                            entry.querySelector('.run-vacuum').value = cells[3].textContent.trim();
+                            entry.querySelector('.run-current').value = cells[4].textContent.trim();
+                            entry.querySelector('.run-hycal-temp').value = cells[5].textContent.trim();
+                            entry.querySelector('.run-rate').value = cells[6].textContent.trim();
+                            entry.querySelector('.run-livetime').value = cells[7].textContent.trim();
+                            entry.querySelector('.run-date').value = cells[8].textContent.trim();
+                            entry.querySelector('.run-start').value = cells[9].textContent.trim();
+                            entry.querySelector('.run-stop').value = cells[10].textContent.trim();
+                            entry.querySelector('.run-comments').value = cells[11].textContent.trim();
                         }
                     });
                 }
@@ -1004,7 +853,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
 
         function clearAllData() {
             if (confirm('Are you sure you want to clear all data and start fresh? This cannot be undone.')) {
-                localStorage.removeItem('pradLogbookData');
+                localStorage.removeItem('x17LogbookData');
                 document.getElementById('summaryText').value = '';
                 document.getElementById('runPlanLink').value = 'https://wiki.jlab.org/clas12-run/index.php/X17/PRad_II#tab=Short_Term_Plan';
                 document.getElementById('checklistLink').value = '';
@@ -1028,7 +877,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
         });
 
         // Initialize with one entry each if no saved data
-        if (!localStorage.getItem('pradLogbookData')) {
+        if (!localStorage.getItem('x17LogbookData')) {
             addShiftEntry();
             addRunEntry();
         }
