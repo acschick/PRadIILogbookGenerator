@@ -459,12 +459,18 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             saveToLocalStorage();
         }
 
+        function linkifyURLs(text) {
+            // Regex to detect URLs (http, https, ftp)
+            const urlRegex = /(https?:\/\/[^\s<]+)/g;
+            return text.replace(urlRegex, '<a href="$1">$1</a>');
+        }
+
         function generateHTML() {
             let html = '<h2>Summary</h2>\n';
             
             // Summary section
             const summaryText = document.getElementById('summaryText').value;
-            html += summaryText;
+            html += linkifyURLs(summaryText);
             html += '\n<br>\n';
             
             // Quick Links
@@ -532,7 +538,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 html += `      ${time}\n`;
                 html += `    </td>\n`;
                 html += `    <td>\n`;
-                html += `     ${entry}\n`;
+                html += `     ${linkifyURLs(entry)}\n`;
                 html += `    </td>\n`;
                 html += `  </tr>\n\n`;
             });
@@ -648,7 +654,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 html += `    <td style="text-align:right">\n${rate}\n    </td>\n`;
                 html += `    <td style="text-align:right">\n${livetime}\n    </td>\n`;
                 html += `    <td style="text-align:left">\n${config}\n    </td>\n`;
-                html += `    <td style="text-align:left">\n${comments}\n    </td>\n`;
+                html += `    <td style="text-align:left">\n${linkifyURLs(comments)}\n    </td>\n`;
                 html += `</tr>\n\n`;
             });
             
