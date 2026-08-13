@@ -199,15 +199,46 @@
             margin-bottom: 20px;
         }
         .logo-container img {
-            max-width: 400px;
+            width: min(400px, 100%);
             height: auto;
             filter: drop-shadow(0 0 20px rgba(255, 152, 0, 0.4));
+        }
+        .logo-fallback {
+            display: none;
+            color: #ff9800;
+            font-size: 42px;
+            font-weight: bold;
+            letter-spacing: 0;
+            text-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 0 30px rgba(255, 152, 0, 0.3);
+        }
+        @media (max-width: 700px) {
+            body {
+                margin: 0;
+                padding: 12px;
+            }
+            .container {
+                padding: 14px;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .btn {
+                width: 100%;
+                margin-right: 0;
+                min-height: 44px;
+            }
+            .entry-header {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="logo-container">
-        <img src="https://www.jlab.org/prad/PRad_logo.png" alt="PRad Logo" />
+        <img id="pradLogo" src="https://www.jlab.org/prad/PRad_logo.png" alt="PRad Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';" />
+        <div id="logoFallback" class="logo-fallback">PRad</div>
     </div>
     <h1 style="text-align: center; color: #ff9800; text-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 0 30px rgba(255, 152, 0, 0.3);">X17 Logbook Entry Generator</h1>
     
@@ -297,6 +328,46 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
     <script>
         let shiftCounter = 0;
         let runCounter = 0;
+        let storageAvailable = true;
+        const storageKey = 'x17LogbookData';
+
+        function readSavedData() {
+            if (!storageAvailable) return null;
+            try {
+                return localStorage.getItem(storageKey);
+            } catch (error) {
+                storageAvailable = false;
+                updateStorageStatus('Autosave unavailable in this browser, but the page will still work.');
+                return null;
+            }
+        }
+
+        function writeSavedData(data) {
+            if (!storageAvailable) return;
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(data));
+            } catch (error) {
+                storageAvailable = false;
+                updateStorageStatus('Autosave unavailable in this browser, but the page will still work.');
+            }
+        }
+
+        function removeSavedData() {
+            if (!storageAvailable) return;
+            try {
+                localStorage.removeItem(storageKey);
+            } catch (error) {
+                storageAvailable = false;
+                updateStorageStatus('Autosave unavailable in this browser, but the page will still work.');
+            }
+        }
+
+        function updateStorageStatus(message, color = '#64b5f6') {
+            const status = document.getElementById('autoSaveStatus');
+            if (!status) return;
+            status.textContent = message;
+            status.style.color = color;
+        }
 
         function addAdditionalLink() {
             const container = document.getElementById('additionalLinks');
@@ -661,14 +732,14 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 data.runEntries.push(runData);
             });
 
-            localStorage.setItem('x17LogbookData', JSON.stringify(data));
-            
-            const status = document.getElementById('autoSaveStatus');
-            status.textContent = 'Last autosave at ' + new Date().toLocaleTimeString();
+            writeSavedData(data);
+            if (storageAvailable) {
+                updateStorageStatus('Last autosave at ' + new Date().toLocaleTimeString());
+            }
         }
 
         function loadFromLocalStorage() {
-            const saved = localStorage.getItem('x17LogbookData');
+            const saved = readSavedData();
             if (!saved) return;
 
             try {
@@ -720,10 +791,8 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                     lastItem.querySelector('.run-comments').value = run.comments;
                 });
 
-                const status = document.getElementById('autoSaveStatus');
                 const savedDate = new Date(data.timestamp);
-                status.textContent = '✓ Loaded session from ' + savedDate.toLocaleString();
-                status.style.color = '#2196F3';
+                updateStorageStatus('✓ Loaded session from ' + savedDate.toLocaleString(), '#2196F3');
             } catch (e) {
                 console.error('Error loading saved data:', e);
             }
@@ -900,7 +969,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
 
         function clearAllData() {
             if (confirm('Are you sure you want to clear all data and start fresh? This cannot be undone.')) {
-                localStorage.removeItem('x17LogbookData');
+                removeSavedData();
                 document.getElementById('summaryText').value = '';
                 document.getElementById('runPlanLink').value = 'https://wiki.jlab.org/clas12-run/index.php/X17/PRad_II#tab=Short_Term_Plan';
                 document.getElementById('checklistLink').value = '';
@@ -920,14 +989,21 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
 
         // Load saved data on page load
         window.addEventListener('DOMContentLoaded', () => {
-            loadFromLocalStorage();
-        });
+            const logo = document.getElementById('pradLogo');
+            const logoFallback = document.getElementById('logoFallback');
+            logo.addEventListener('error', () => {
+                logo.style.display = 'none';
+                logoFallback.style.display = 'block';
+            });
 
-        // Initialize with one entry each if no saved data
-        if (!localStorage.getItem('x17LogbookData')) {
-            addShiftEntry();
-            addRunEntry();
-        }
+            loadFromLocalStorage();
+
+            // Initialize with one entry each if no saved data
+            if (!readSavedData()) {
+                addShiftEntry();
+                addRunEntry();
+            }
+        });
     </script>
 </body>
 </html>
