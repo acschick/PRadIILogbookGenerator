@@ -360,7 +360,12 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                             <option value="2um Ta">2um Ta</option>
                             <option value="4um Ta">4um Ta</option>
                             <option value="50um C">50um C</option>
+                            <option value="Empty Target">Empty Target</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Trigger File:</label>
+                        <input type="text" class="run-trigger-file" value="">
                     </div>
                     <div class="form-group">
                         <label>Collimator:</label>
@@ -425,7 +430,23 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
         }
 
         function generateHTML() {
-            let html = '<h2>Summary</h2>\n';
+            let html = '<style>\n';
+            html += '  .shift-log-wrap { max-width: 100%; }\n';
+            html += '  .shift-log-wrap table { border-collapse: collapse; width: 100%; }\n';
+            html += '  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 1em; }\n';
+            html += '  .quick-links { display: flex; flex-wrap: wrap; gap: 0.5em 1em; }\n';
+            html += '  .quick-links a { white-space: nowrap; }\n';
+            html += '\n';
+            html += '  @media (max-width: 600px) {\n';
+            html += '    .shift-log-wrap { font-size: 14px; }\n';
+            html += '    .shift-log-wrap table th,\n';
+            html += '    .shift-log-wrap table td { padding: 4px 6px; }\n';
+            html += '    .shift-log-wrap h2 { font-size: 1.2em; }\n';
+            html += '    .shift-log-wrap h3 { font-size: 1.05em; }\n';
+            html += '  }\n';
+            html += '</style>\n\n';
+            html += '<div class="shift-log-wrap">\n';
+            html += '<h2>Summary</h2>\n';
             
             // Summary section
             const summaryText = document.getElementById('summaryText').value;
@@ -434,31 +455,32 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             
             // Quick Links
             html += '<h3>Quick Links</h3>\n';
+            html += '<div class="quick-links">\n';
             
             // Fixed links
             const runPlanLink = document.getElementById('runPlanLink').value;
             if (runPlanLink) {
-                html += `<a href="${runPlanLink}">Short Term Run Plan</a>\n<br>\n`;
+                html += `<a href="${runPlanLink}">Short Term Run Plan</a>\n`;
             }
             
             const checklistLink = document.getElementById('checklistLink').value;
             if (checklistLink) {
-                html += `<a href="${checklistLink}">Link to PRadII/X17 Shift Worker's Checklist</a>\n<br>\n`;
+                html += `<a href="${checklistLink}">Link to PRadII/X17 Shift Worker's Checklist</a>\n`;
             }
             
             const beamlineLink = document.getElementById('beamlineLink').value;
             if (beamlineLink) {
-                html += `<a href="${beamlineLink}">Beamline Overview/HyCal Scalars Screenshot</a>\n<br>\n`;
+                html += `<a href="${beamlineLink}">Beamline Overview/HyCal Scalars Screenshot</a>\n`;
             }
             
             const targetGuiLink = document.getElementById('targetGuiLink').value;
             if (targetGuiLink) {
-                html += `<a href="${targetGuiLink}">Link to Target GUI Screenshot</a>\n<br>\n`;
+                html += `<a href="${targetGuiLink}">Link to Target GUI Screenshot</a>\n`;
             }
             
             const beamtimeLink = document.getElementById('beamtimeLink').value;
             if (beamtimeLink) {
-                html += `<a href="${beamtimeLink}">Link to Beamtime Accounting</a>\n<br>\n`;
+                html += `<a href="${beamtimeLink}">Link to Beamtime Accounting</a>\n`;
             }
             
             // Additional links
@@ -467,12 +489,14 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 const text = item.querySelector('.al-text').value;
                 const url = item.querySelector('.al-url').value;
                 if (text && url) {
-                    html += `<a href="${url}">${text}</a>\n<br>\n`;
+                    html += `<a href="${url}">${text}</a>\n`;
                 }
             });
+            html += '</div>\n';
             
             // Shift Log
             html += '\n<hr>\n<h2>Shift Log</h2>\n';
+            html += '<div class="table-scroll">\n';
             html += '<table style="border:2px solid black;"> \n';
             html += '  <colgroup>\n';
             html += '    <col style="border:1px solid black;"/>\n';
@@ -502,19 +526,22 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 html += `  </tr>\n\n`;
             });
             
-            html += '</table>\n\n';
+            html += '</table>\n';
+            html += '</div>\n\n';
             
             // Run Summary
             html += '<hr>\n<h2>Run Summary</h2>\n';
+            html += '<div class="table-scroll">\n';
             html += '<table style="border:2px solid black;">\n';
             html += '  <colgroup>\n';
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 13; i++) {
                 html += '    <col style="border:1px solid black;"/>\n';
             }
             html += '  </colgroup> \n';
             html += '  <tr style="border:1px solid black; background-color: rgba(222,222,222,1.0);">\n';
             html += '    <th style="text-align:center;">Run Number</th>\n';
             html += '    <th style="text-align:left;">Target</th>\n';
+            html += '    <th style="text-align:left;">Trigger File</th>\n';
             html += '    <th style="text-align:left;">Collimator</th>\n';
             html += '    <th style="text-align:right;">Vacuum Tank Pressure 2H00 (mTorr)</th>\n';
             html += '    <th style="text-align:right;">Beam Current</th>\n';
@@ -531,6 +558,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             runItems.forEach((item, index) => {
                 const runNumber = item.querySelector('.run-number').value;
                 const target = item.querySelector('.run-target').value;
+                const triggerFile = item.querySelector('.run-trigger-file').value;
                 const collimator = item.querySelector('.run-collimator').value;
                 const vacuum = item.querySelector('.run-vacuum').value;
                 const current = item.querySelector('.run-current').value;
@@ -549,6 +577,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 html += `<tr${styleAttr}>\n`;
                 html += `    <td style="text-align:right">\n${runNumber}\n    </td>\n`;
                 html += `    <td style="text-align:left">\n${target}\n    </td>\n`;
+                html += `    <td style="text-align:left">\n${triggerFile}\n    </td>\n`;
                 html += `    <td style="text-align:left">\n${collimator}\n    </td>\n`;
                 html += `    <td style="text-align:right">\n${vacuum}\n    </td>\n`;
                 html += `    <td style="text-align:right">\n${current}\n    </td>\n`;
@@ -563,6 +592,8 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
             });
             
             html += '</table>\n';
+            html += '</div>\n';
+            html += '</div>\n';
             
             document.getElementById('output').textContent = html;
             document.getElementById('preview').innerHTML = html;
@@ -615,6 +646,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                 const runData = {
                     runNumber: item.querySelector('.run-number').value,
                     target: item.querySelector('.run-target').value,
+                    triggerFile: item.querySelector('.run-trigger-file').value,
                     collimator: item.querySelector('.run-collimator').value,
                     vacuum: item.querySelector('.run-vacuum').value,
                     current: item.querySelector('.run-current').value,
@@ -675,6 +707,7 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                     const lastItem = items[items.length - 1];
                     lastItem.querySelector('.run-number').value = run.runNumber;
                     lastItem.querySelector('.run-target').value = run.target || '1um Ta';
+                    lastItem.querySelector('.run-trigger-file').value = run.triggerFile || '';
                     lastItem.querySelector('.run-collimator').value = run.collimator || '';
                     lastItem.querySelector('.run-vacuum').value = run.vacuum;
                     lastItem.querySelector('.run-current').value = run.current;
@@ -827,16 +860,30 @@ Example 2: Beam was gone for 80% of the shift. We are tuning the beam now and ho
                         if (entry) {
                             entry.querySelector('.run-number').value = cells[0].textContent.trim();
                             entry.querySelector('.run-target').value = cells[1].textContent.trim();
-                            entry.querySelector('.run-collimator').value = cells[2].textContent.trim();
-                            entry.querySelector('.run-vacuum').value = cells[3].textContent.trim();
-                            entry.querySelector('.run-current').value = cells[4].textContent.trim();
-                            entry.querySelector('.run-hycal-temp').value = cells[5].textContent.trim();
-                            entry.querySelector('.run-rate').value = cells[6].textContent.trim();
-                            entry.querySelector('.run-livetime').value = cells[7].textContent.trim();
-                            entry.querySelector('.run-date').value = cells[8].textContent.trim();
-                            entry.querySelector('.run-start').value = cells[9].textContent.trim();
-                            entry.querySelector('.run-stop').value = cells[10].textContent.trim();
-                            entry.querySelector('.run-comments').value = cells[11].textContent.trim();
+                            if (cells.length >= 13) {
+                                entry.querySelector('.run-trigger-file').value = cells[2].textContent.trim();
+                                entry.querySelector('.run-collimator').value = cells[3].textContent.trim();
+                                entry.querySelector('.run-vacuum').value = cells[4].textContent.trim();
+                                entry.querySelector('.run-current').value = cells[5].textContent.trim();
+                                entry.querySelector('.run-hycal-temp').value = cells[6].textContent.trim();
+                                entry.querySelector('.run-rate').value = cells[7].textContent.trim();
+                                entry.querySelector('.run-livetime').value = cells[8].textContent.trim();
+                                entry.querySelector('.run-date').value = cells[9].textContent.trim();
+                                entry.querySelector('.run-start').value = cells[10].textContent.trim();
+                                entry.querySelector('.run-stop').value = cells[11].textContent.trim();
+                                entry.querySelector('.run-comments').value = cells[12].textContent.trim();
+                            } else {
+                                entry.querySelector('.run-collimator').value = cells[2].textContent.trim();
+                                entry.querySelector('.run-vacuum').value = cells[3].textContent.trim();
+                                entry.querySelector('.run-current').value = cells[4].textContent.trim();
+                                entry.querySelector('.run-hycal-temp').value = cells[5].textContent.trim();
+                                entry.querySelector('.run-rate').value = cells[6].textContent.trim();
+                                entry.querySelector('.run-livetime').value = cells[7].textContent.trim();
+                                entry.querySelector('.run-date').value = cells[8].textContent.trim();
+                                entry.querySelector('.run-start').value = cells[9].textContent.trim();
+                                entry.querySelector('.run-stop').value = cells[10].textContent.trim();
+                                entry.querySelector('.run-comments').value = cells[11].textContent.trim();
+                            }
                         }
                     });
                 }
